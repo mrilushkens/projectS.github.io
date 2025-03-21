@@ -1,0 +1,290 @@
+:root {
+    --bg-color: #fff;
+    --text-color: #333;
+    --border-color: #ccc;
+}
+
+.dark-theme {
+    --bg-color: #2d2d2d;
+    --text-color: #fff;
+    --border-color: #666;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.top-panel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+    gap: 15px;
+    height: 60px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.top-panel button {
+    padding: 8px 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.top-panel button:hover {
+    background-color: var(--border-color);
+    transform: translateY(-1px);
+}
+
+#simulation-status {
+    margin-left: 10px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    color: #333;
+    font-size: 14px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#simulation-status.running {
+    background-color: #4caf50; /* Зелёный фон при запуске */
+    color: white;
+}
+
+.dark-theme #simulation-status {
+    background-color: #555;
+    color: #fff;
+}
+
+.dark-theme #simulation-status.running {
+    background-color: #388e3c;
+}
+
+.main-container {
+    display: flex;
+    height: 90vh;
+}
+
+.left-panel {
+    width: 250px;
+    border-right: 1px solid var(--border-color);
+    padding: 10px;
+    position: relative;
+    z-index: 1;
+    background-color: var(--bg-color);
+}
+
+.left-panel.drop-target {
+    box-shadow: inset 0 0 15px rgba(255, 0, 0, 0.3);
+}
+
+.right-panel {
+    width: 300px;
+    border-left: 1px solid var(--border-color);
+    padding: 10px;
+}
+
+.workspace {
+    flex: 1;
+    position: relative;
+    z-index: 0;
+    background-image: linear-gradient(var(--border-color) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+    background-size: 20px 20px;
+    overflow: hidden;
+}
+
+/* Схематичные элементы */
+.circuit-element {
+    position: absolute;
+    cursor: pointer;
+    user-select: none;
+    width: 100px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    transition: transform 0.1s;
+}
+
+.circuit-element.battery {
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><line x1="40" y1="17.5" x2="40" y2="42.5" stroke="black" stroke-width="2"/><text x="35" y="20" font-size="12" fill="black" text-anchor="end" dominant-baseline="middle">−</text><line x1="60" y1="12.5" x2="60" y2="47.5" stroke="black" stroke-width="2"/><text x="65" y="20" font-size="12" fill="black" text-anchor="start" dominant-baseline="middle">+</text><line x1="40" y1="30" x2="0" y2="30" stroke="black" stroke-width="2"/><line x1="60" y1="30" x2="100" y2="30" stroke="black" stroke-width="2"/></svg>') no-repeat center;
+}
+
+.circuit-element.resistor {
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><rect x="20" y="20" width="60" height="20" fill="none" stroke="black" stroke-width="2"/><line x1="20" y1="30" x2="0" y2="30" stroke="black" stroke-width="2"/><line x1="80" y1="30" x2="100" y2="30" stroke="black" stroke-width="2"/></svg>') no-repeat center;
+}
+
+.circuit-element.lamp[data-state="off"] {
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><circle cx="50" cy="30" r="20" fill="none" stroke="black" stroke-width="2"/><line x1="40" y1="20" x2="60" y2="40" stroke="black" stroke-width="2"/><line x1="60" y1="20" x2="40" y2="40" stroke="black" stroke-width="2"/><line x1="30" y1="30" x2="0" y2="30" stroke="black" stroke-width="2"/><line x1="70" y1="30" x2="100" y2="30" stroke="black" stroke-width="2"/></svg>') no-repeat center;
+}
+
+.circuit-element.lamp[data-state="on"] {
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><circle cx="50" cy="30" r="20" fill="rgba(255, 255, 0, 0.3)" stroke="black" stroke-width="2"/><line x1="30" y1="30" x2="0" y2="30" stroke="black" stroke-width="2"/><line x1="70" y1="30" x2="100" y2="30" stroke="black" stroke-width="2"/></svg>') no-repeat center;
+}
+
+.circuit-element.switch[data-state="open"] {
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><line x1="20" y1="30" x2="50" y2="30" stroke="black" stroke-width="2"/><line x1="50" y1="30" x2="80" y2="10" stroke="black" stroke-width="2"/><line x1="20" y1="30" x2="0" y2="30" stroke="black" stroke-width="2"/><line x1="50" y1="30" x2="50" y2="30" stroke="black" stroke-width="2"/></svg>') no-repeat center;
+}
+
+.circuit-element.switch[data-state="closed"] {
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><line x1="20" y1="30" x2="80" y2="30" stroke="black" stroke-width="2"/><line x1="20" y1="30" x2="0" y2="30" stroke="black" stroke-width="2"/><line x1="80" y1="30" x2="100" y2="30" stroke="black" stroke-width="2"/></svg>') no-repeat center;
+}
+
+.circuit-element.ammeter {
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><circle cx="50" cy="30" r="20" fill="none" stroke="black" stroke-width="2"/><text x="50" y="35" font-size="16" fill="black" text-anchor="middle" dominant-baseline="middle">A</text><line x1="30" y1="30" x2="0" y2="30" stroke="black" stroke-width="2"/><line x1="70" y1="30" x2="100" y2="30" stroke="black" stroke-width="2"/></svg>') no-repeat center;
+}
+.circuit-element.voltmeter {
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><circle cx="50" cy="30" r="20" fill="none" stroke="black" stroke-width="2"/><text x="50" y="35" font-size="16" fill="black" text-anchor="middle" dominant-baseline="middle">V</text><line x1="30" y1="30" x2="0" y2="30" stroke="black" stroke-width="2"/><line x1="70" y1="30" x2="100" y2="30" stroke="black" stroke-width="2"/></svg>') no-repeat center;
+    background-size: contain;
+    width: 100px;
+    height: 60px;
+}
+
+.circuit-element:hover {
+    transform: scale(1.1);
+    z-index: 10;
+}
+
+.circuit-element.dragging {
+    opacity: 0.7;
+    cursor: grabbing;
+    z-index: 1000;
+}
+
+.circuit-element.selected {
+    outline: 2px solid #ffeb3b;
+    outline-offset: 5px;
+}
+
+.circuit-element.deleting {
+    transform: scale(0);
+    opacity: 0;
+}
+
+/* Точки подключения */
+.connection-point {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    cursor: crosshair;
+}
+
+.connection-point.input {
+    left: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.connection-point.output {
+    right: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Провода */
+#wires {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#wires line {
+    stroke: black;
+    stroke-width: 3;
+    pointer-events: all; /* Делаем линии кликабельными */
+    cursor: pointer;
+    transition: stroke 0.1s, stroke-width 0.1s; /* Плавный переход для цвета и толщины */
+}
+
+#wires line:hover {
+    stroke: red; /* Подсветка красным при наведении */
+    stroke-width: 5; /* Увеличение толщины */
+}
+
+/* Компоненты левой панели */
+.component-icon {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin: 5px;
+    cursor: move;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-color);
+    transition: transform 0.2s;
+}
+
+.component-icon:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.component-item {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.component-item:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.component-label {
+    margin-left: 10px;
+    font-size: 14px;
+    user-select: none;
+    color: var(--text-color);
+}
+
+/* Отключаем выделение в левой панели */
+.left-panel {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Панель свойств */
+#properties input {
+    display: block;
+    margin: 5px 0;
+    padding: 5px;
+    width: 90%;
+}
+
+.delete-button {
+    background: #ff4444;
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px 0;
+}
+
+/* Анимация удаления */
+@keyframes trash-animation {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(0.5) rotate(-45deg); opacity: 0.5; }
+    100% { transform: scale(0) rotate(90deg); opacity: 0; }
+}
+
+.deleting {
+    animation: trash-animation 0.3s ease forwards;
+}
